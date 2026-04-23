@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Palitos y Pelotitas - Autos</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+        background: #f3f6fb;
+        color: #1f2937;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+      }
+      .galeria {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        margin: 0;
+        background: #ffffff;
+        border: 1px solid #d6deea;
+        border-radius: 12px;
+        padding: 10px;
+      }
+      .card img {
+        display: block;
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #eef2f7;
+      }
+      figcaption {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: #4b5563;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Autos PNG</h1>
+      <section class="galeria" aria-label="Galeria de autos">
+        <figure class="card">
+          <img src="./auto fitito viejo.png" alt="Auto fitito viejo" />
+          <figcaption>auto fitito viejo.png</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="./auto fitito.png" alt="Auto fitito" />
+          <figcaption>auto fitito.png</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="./autos.png" alt="Autos" />
+          <figcaption>autos.png</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="./bmv.png" alt="Auto BMV" />
+          <figcaption>bmv.png</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="./bulto.png" alt="Auto bulto" />
+          <figcaption>bulto.png</figcaption>
+        </figure>
+      </section>
+    </main>
+  </body>
+</html>
