@@ -207,9 +207,12 @@
         "Finalización de la migración de Venta Mayorista a formato Distribución.",
       ];
       const dropZones = document.querySelectorAll(".bultos");
-      const STORAGE_KEY = "palitosypelotitas-bultos-layout-v2";
+      const STORAGE_KEY = "palitosypelotitas-bultos-layout-v3";
       const fititoZone = document.getElementById("fitito-zone");
       const bmwZone = document.getElementById("bmw-zone");
+      // IDs de bultos que deben quedar siempre del lado BMW.
+      // Ejemplo: ["b1", "b5"]
+      const BULTOS_FIJOS_BMW = [];
       let draggedCard = null;
 
       function crearBultoCard(texto, id) {
@@ -241,11 +244,19 @@
       }
 
       function saveLayout() {
+        enforceBultosFijosBmw();
         const layout = {
           fitito: getZoneState("fitito-zone"),
           bmw: getZoneState("bmw-zone"),
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
+      }
+
+      function enforceBultosFijosBmw() {
+        BULTOS_FIJOS_BMW.forEach((id) => {
+          const card = document.querySelector(`[data-bulto-id="${id}"]`);
+          if (card) bmwZone.appendChild(card);
+        });
       }
 
       function restoreLayout() {
@@ -269,6 +280,7 @@
       }
 
       restoreLayout();
+      enforceBultosFijosBmw();
 
       bultoCards.forEach((card) => {
         card.addEventListener("dragstart", () => {
@@ -292,7 +304,12 @@
           event.preventDefault();
           zone.classList.remove("drop-hover");
           if (!draggedCard) return;
-          zone.appendChild(draggedCard);
+          const isFijoBmw = BULTOS_FIJOS_BMW.includes(draggedCard.dataset.bultoId);
+          if (isFijoBmw) {
+            bmwZone.appendChild(draggedCard);
+          } else {
+            zone.appendChild(draggedCard);
+          }
           saveLayout();
         });
       });
