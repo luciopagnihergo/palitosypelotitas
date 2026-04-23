@@ -128,6 +128,115 @@
         border-color: var(--accent);
         background: color-mix(in oklab, var(--accent) 10%, transparent);
       }
+      .timeline {
+        margin-top: 1.2rem;
+        border: 1px solid color-mix(in oklab, var(--muted) 35%, transparent);
+        border-radius: 0.9rem;
+        padding: 1rem;
+        background: color-mix(in oklab, var(--bg) 82%, var(--fg) 18%);
+        text-align: left;
+      }
+      .timeline h2 {
+        margin: 0 0 0.8rem;
+        font-size: 1.05rem;
+      }
+      .timeline-track {
+        position: relative;
+        height: 4px;
+        background: color-mix(in oklab, var(--muted) 50%, transparent);
+        border-radius: 999px;
+        margin: 1.1rem 0 0.8rem;
+      }
+      .timeline-point {
+        position: absolute;
+        top: 50%;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--accent);
+        transform: translate(-50%, -50%);
+      }
+      .timeline-point.start {
+        left: 0%;
+      }
+      .timeline-point.end {
+        left: 100%;
+      }
+      .timeline-point.today {
+        left: 0%;
+        width: 14px;
+        height: 14px;
+        background: #22c55e;
+        box-shadow: 0 0 0 3px color-mix(in oklab, #22c55e 35%, transparent);
+      }
+      .timeline-today-label {
+        display: inline-block;
+        margin-top: 0.35rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #22c55e;
+      }
+      .timeline-dates {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+      .timeline img {
+        display: block;
+        width: 100%;
+        max-height: 260px;
+        object-fit: contain;
+        border-radius: 0.7rem;
+        border: 1px solid color-mix(in oklab, var(--muted) 30%, transparent);
+        background: color-mix(in oklab, white 45%, transparent);
+      }
+      .route-track {
+        position: relative;
+        height: 58px;
+        border-radius: 6px;
+        margin-top: 0.9rem;
+        background:
+          linear-gradient(
+            to bottom,
+            #f8fafc 0 3px,
+            transparent 3px calc(100% - 3px),
+            #f8fafc calc(100% - 3px) 100%
+          ),
+          repeating-linear-gradient(
+              to right,
+              #ffd54a 0 28px,
+              transparent 28px 46px
+            )
+            center / 100% 4px no-repeat,
+          linear-gradient(
+            to bottom,
+            #535d6f 0 10%,
+            #394253 10% 90%,
+            #535d6f 90% 100%
+          );
+        box-shadow:
+          0 1px 0 color-mix(in oklab, #f8fafc 70%, transparent),
+          0 -1px 0 color-mix(in oklab, #f8fafc 70%, transparent),
+          0 6px 14px color-mix(in oklab, #0f172a 22%, transparent),
+          inset 0 0 0 1px color-mix(in oklab, #0f172a 65%, transparent),
+          inset 0 0 12px color-mix(in oklab, #0f172a 40%, transparent);
+      }
+      .route-car {
+        position: absolute;
+        left: calc(50% - 22px);
+        width: 44px;
+        height: 24px;
+        object-fit: contain;
+        z-index: 1;
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+      }
+      .route-car.fitito {
+        bottom: 30px;
+      }
+      .route-car.bmw {
+        bottom: 4px;
+      }
       @media (max-width: 640px) {
         .autos {
           grid-template-columns: 1fr;
@@ -146,6 +255,24 @@
           <div class="bultos" id="bmw-zone" aria-label="Bultos sobre BMW"></div>
           <img src="./bmv.png" alt="Auto BMW moderno" />
         </article>
+      </section>
+      <section class="timeline" aria-label="Linea de tiempo de autos">
+        <h2>Linea de tiempo</h2>
+        <img src="./autos.png" alt="Fitito y BMW en linea de tiempo" />
+        <div class="timeline-track" aria-hidden="true">
+          <span class="timeline-point start"></span>
+          <span class="timeline-point end"></span>
+          <span class="timeline-point today" id="timeline-today-marker"></span>
+        </div>
+        <span class="timeline-today-label" id="timeline-today-label">Hoy</span>
+        <div class="timeline-dates">
+          <span>27 de abril de 2026</span>
+          <span>27 de abril de 2027</span>
+        </div>
+        <div class="route-track" id="route-track" aria-hidden="true">
+          <img id="route-fitito" class="route-car fitito" src="./auto fitito.png" alt="" />
+          <img id="route-bmw" class="route-car bmw" src="./bmv.png" alt="" />
+        </div>
       </section>
     </main>
     <script>
@@ -216,6 +343,36 @@
       const BULTOS_FIJOS_BMW = [];
       let draggedCard = null;
 
+      function updateTimelineTodayMarker() {
+        const marker = document.getElementById("timeline-today-marker");
+        const label = document.getElementById("timeline-today-label");
+        const routeTrack = document.getElementById("route-track");
+        const fititoSmall = document.getElementById("route-fitito");
+        const bmwSmall = document.getElementById("route-bmw");
+        if (!marker || !label) return;
+
+        const start = new Date(2026, 3, 27);
+        const end = new Date(2027, 3, 27);
+        const today = new Date();
+        const total = end.getTime() - start.getTime();
+        const elapsed = today.getTime() - start.getTime();
+        const percentRaw = (elapsed / total) * 100;
+        const percent = Math.min(100, Math.max(0, percentRaw));
+
+        marker.style.left = `${percent}%`;
+        label.textContent = `Hoy: ${today.toLocaleDateString("es-AR")}`;
+        if (fititoSmall && bmwSmall && routeTrack) {
+          const trackWidth = routeTrack.clientWidth;
+          const carWidth = 44;
+          const minLeft = 2;
+          const maxLeft = Math.max(minLeft, trackWidth - carWidth - 2);
+          const leftPx = minLeft + (percent / 100) * (maxLeft - minLeft);
+
+          fititoSmall.style.left = `${leftPx}px`;
+          bmwSmall.style.left = `${leftPx}px`;
+        }
+      }
+
       function crearBultoCard(texto, id) {
         const card = document.createElement("div");
         card.className = "bulto-card";
@@ -282,6 +439,7 @@
 
       restoreLayout();
       enforceBultosFijosBmw();
+      updateTimelineTodayMarker();
 
       bultoCards.forEach((card) => {
         card.addEventListener("dragstart", () => {
